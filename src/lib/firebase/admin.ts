@@ -15,9 +15,9 @@ function getAdminApp(): App | null {
   const customKeyPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
   const filePathToTry = customKeyPath || rootKeyPath;
 
-  if (fs.existsSync(filePathToTry)) {
+  if (fs.existsSync(/*turbopackIgnore: true*/ filePathToTry)) {
     try {
-      const fileContent = fs.readFileSync(filePathToTry, 'utf-8');
+      const fileContent = fs.readFileSync(/*turbopackIgnore: true*/ filePathToTry, 'utf-8');
       const serviceAccount = JSON.parse(fileContent);
       console.log(`[Firebase Admin] Initializing with service account file: ${filePathToTry}`);
       return initializeApp({
