@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { AdminSidebar } from '@/components/layout/admin-sidebar';
 import { StudentNav } from '@/components/layout/student-nav';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
-import { Loader2, ShieldAlert, ArrowLeft, ShieldCheck, LogOut } from 'lucide-react';
+import { Loader2, ShieldAlert, ArrowLeft, ShieldCheck, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -15,7 +15,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading, updateUserRole, signOut } = useAuth();
+  const { user, loading, updateUserRole } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -26,21 +26,28 @@ export default function DashboardLayout({
   }, []);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+    if (!loading && !user && mounted) {
+      const redirectUrl = `/login?next=${encodeURIComponent(pathname || '/student')}`;
+      router.replace(redirectUrl);
     }
-  }, [user, loading, router]);
+  }, [user, loading, mounted, pathname, router]);
 
-  if (!mounted || loading) {
+  // Centered session checking state (No blank flashes)
+  if (!mounted || loading || !user) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 p-4">
+        <div className="flex flex-col items-center space-y-4 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-[#1e3a5f] flex items-center justify-center text-white shadow-md">
+            <GraduationCap className="w-7 h-7" />
+          </div>
+          <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
+          <div>
+            <h2 className="text-base font-bold text-slate-800">Checking your session...</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Verifying authentication with Smart Mind Portal</p>
+          </div>
+        </div>
       </div>
     );
-  }
-
-  if (!user) {
-    return null;
   }
 
   const isAdminRoute = pathname.startsWith('/admin');
@@ -61,7 +68,7 @@ export default function DashboardLayout({
   // ACCESS CONTROL: If user is not admin and visits /admin, show explanation and 1-click admin promotion
   if (isAdminRoute && !isActualAdmin) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center bg-slate-50 p-6 text-center">
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 p-6 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4 shadow-sm">
           <ShieldAlert className="h-8 w-8" />
         </div>
@@ -75,7 +82,7 @@ export default function DashboardLayout({
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/student">
-            <Button variant="outline" className="flex items-center gap-2 cursor-pointer">
+            <Button variant="outline" className="flex items-center gap-2 cursor-pointer min-h-[44px]">
               <ArrowLeft className="w-4 h-4" />
               Back to Student Dashboard
             </Button>
@@ -85,7 +92,7 @@ export default function DashboardLayout({
           <Button 
             onClick={handleGrantAdmin}
             disabled={switching}
-            className="bg-[#1e3a5f] hover:bg-[#152840] text-white flex items-center gap-2 cursor-pointer font-bold shadow-md"
+            className="bg-[#1e3a5f] hover:bg-[#152840] text-white flex items-center gap-2 cursor-pointer font-bold shadow-md min-h-[44px]"
           >
             {switching ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -100,36 +107,26 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar for Admin */}
-      {isActualAdmin && isAdminRoute && (
-        <div className="hidden md:block">
-          <AdminSidebar />
-        </div>
-      )}
-
-      {/* Sidebar for Student */}
-      {(!isAdminRoute || !isActualAdmin) && (
-        <div className="hidden md:block">
-          <StudentNav />
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <DashboardHeader isAdmin={isActualAdmin} />
-        
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
-          {children}
-        </main>
-
-        {/* Bottom Nav for Student (Mobile) */}
-        {!isActualAdmin && (
-          <div className="block md:hidden">
-            <StudentNav />
+    <div className="min-h-screen bg-background">
+      {isAdminRoute ? (
+        <div className="flex min-h-screen">
+          <AdminSidebar className="hidden md:flex" />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <DashboardHeader isAdmin={true} />
+            <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+              {children}
+            </main>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex min-h-screen flex-col">
+          <DashboardHeader isAdmin={false} />
+          <StudentNav />
+          <main className="flex-1 p-4 md:p-6 lg:p-8">
+            {children}
+          </main>
+        </div>
+      )}
     </div>
   );
 }
