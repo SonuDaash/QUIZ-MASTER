@@ -25,7 +25,7 @@ export default function ReviewQueuePage() {
   async function fetchReviewQuestions() {
     setLoading(true);
     try {
-      const all = await getQuestions({ limitCount: 50 });
+      const all = await getQuestions({});
       // Show questions that need review or all if few exist
       const needsReview = all.filter(q => q.verification_status === 'needs_review');
       setQuestions(needsReview.length > 0 ? needsReview : all);

@@ -22,7 +22,7 @@ export default function ExportQuizPaperPage() {
   useEffect(() => {
     async function loadData() {
       const [qData, sData] = await Promise.all([
-        getQuestions({ limitCount: 50 }),
+        getQuestions({}),
         getSubjects(),
       ]);
       setQuestions(qData);

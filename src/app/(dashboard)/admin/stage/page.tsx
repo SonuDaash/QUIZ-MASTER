@@ -47,7 +47,7 @@ export default function StageProjectorView() {
 
   useEffect(() => {
     async function loadStageQuestions() {
-      const data = await getQuestions({ limitCount: 30 });
+      const data = await getQuestions({});
       if (data.length > 0) {
         setQuestions(data);
       }
