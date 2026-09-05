@@ -10,10 +10,9 @@ import {
   X,
   BookOpen,
   Trophy,
-  Play,
-  LogIn,
-  ArrowRight,
+  Shield,
   Info,
+  Lock,
 } from 'lucide-react';
 
 export function PublicHeader() {
@@ -40,19 +39,11 @@ export function PublicHeader() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
           <Link
-            href="/about"
-            className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-blue-600 rounded-md px-2 py-1"
+            href="/"
+            className="text-sm font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 transition-colors flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-blue-600 rounded-md px-2 py-1"
           >
-            <Info className="w-4 h-4" />
-            Format & Rules
-          </Link>
-
-          <Link
-            href="/demo"
-            className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-blue-600 rounded-md px-2 py-1"
-          >
-            <Play className="w-4 h-4 text-emerald-600" />
-            Try Demo Quiz
+            <BookOpen className="w-4 h-4 text-blue-600" />
+            Practice Hub
           </Link>
 
           <Link
@@ -64,28 +55,23 @@ export function PublicHeader() {
           </Link>
 
           <Link
-            href="/practice"
+            href="/about"
             className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-blue-600 rounded-md px-2 py-1"
           >
-            <BookOpen className="w-4 h-4" />
-            Practice Hub
+            <Info className="w-4 h-4 text-slate-500" />
+            Format & Rules
           </Link>
         </nav>
 
-        {/* Desktop CTA Buttons */}
+        {/* Desktop CTA - Admin Login Only */}
         <div className="hidden sm:flex items-center gap-3">
           <Link href="/login">
             <Button
-              variant="ghost"
-              className="text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 min-h-[44px] px-4 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500"
+              variant="outline"
+              className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-blue-700 font-bold text-xs sm:text-sm min-h-[40px] px-4 rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
             >
-              <LogIn className="w-4 h-4 mr-1.5" />
-              Sign In
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button className="bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold text-sm min-h-[44px] px-5 shadow-sm cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500">
-              Start Practice <ArrowRight className="w-4 h-4 ml-1.5" />
+              <Shield className="w-4 h-4 text-indigo-600" />
+              Admin Portal
             </Button>
           </Link>
         </div>
@@ -108,20 +94,12 @@ export function PublicHeader() {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-6 space-y-3 animate-fade-in">
           <Link
-            href="/about"
+            href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 min-h-[44px]"
+            className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-900 min-h-[44px]"
           >
-            <Info className="w-5 h-5 text-blue-600" />
-            Format & Rules
-          </Link>
-          <Link
-            href="/demo"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 min-h-[44px]"
-          >
-            <Play className="w-5 h-5 text-emerald-600" />
-            Try Demo Quiz (Free Preview)
+            <BookOpen className="w-5 h-5 text-blue-600" />
+            Practice Hub (Free Drills)
           </Link>
           <Link
             href="/leaderboard"
@@ -132,23 +110,18 @@ export function PublicHeader() {
             Leaderboard
           </Link>
           <Link
-            href="/practice"
+            href="/about"
             onClick={() => setMobileMenuOpen(false)}
             className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 min-h-[44px]"
           >
-            <BookOpen className="w-5 h-5 text-blue-600" />
-            Practice Hub
+            <Info className="w-5 h-5 text-slate-500" />
+            Format & Rules
           </Link>
 
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-200 dark:border-slate-800">
             <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full min-h-[44px] text-sm font-semibold justify-center">
-                <LogIn className="w-4 h-4 mr-2" /> Sign In
-              </Button>
-            </Link>
-            <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full bg-[#1e3a5f] hover:bg-[#152840] text-white min-h-[44px] text-sm font-bold justify-center">
-                Start Practice Now
+              <Button variant="outline" className="w-full min-h-[44px] text-sm font-bold justify-center border-slate-300">
+                <Shield className="w-4 h-4 mr-2 text-indigo-600" /> Admin / Host Login
               </Button>
             </Link>
           </div>

@@ -27,8 +27,11 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!loading && !user && mounted) {
-      const redirectUrl = `/login?next=${encodeURIComponent(pathname || '/student')}`;
-      router.replace(redirectUrl);
+      if (pathname.startsWith('/admin')) {
+        router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      } else {
+        router.replace('/');
+      }
     }
   }, [user, loading, mounted, pathname, router]);
 

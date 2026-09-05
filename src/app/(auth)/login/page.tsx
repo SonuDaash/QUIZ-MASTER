@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase/client';
 import { getUserProfile, createUserProfile } from '@/lib/firebase/firestore';
-import { Shield, GraduationCap, ArrowRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Shield, GraduationCap, ArrowRight, AlertCircle, Loader2, BookOpen, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -16,7 +16,6 @@ function LoginForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState<'student' | 'admin'>('student');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,10 +24,8 @@ function LoginForm() {
   const handleSuccessfulRedirect = (role: 'student' | 'admin') => {
     if (nextParam && nextParam.startsWith('/')) {
       router.push(nextParam);
-    } else if (role === 'admin') {
-      router.push('/admin');
     } else {
-      router.push('/student');
+      router.push('/admin');
     }
   };
 
@@ -41,38 +38,36 @@ function LoginForm() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Fetch profile to check role
       let profile = await getUserProfile(user.uid);
 
       if (!profile) {
         await createUserProfile(user.uid, {
           id: user.uid,
-          name: user.displayName || user.email?.split('@')[0] || 'User',
+          name: user.displayName || user.email?.split('@')[0] || 'Admin',
           email: user.email || email,
-          role: selectedRole,
+          role: 'admin',
           avatar_url: user.photoURL,
         });
         profile = {
           id: user.uid,
-          name: user.displayName || user.email?.split('@')[0] || 'User',
+          name: user.displayName || user.email?.split('@')[0] || 'Admin',
           email: user.email || email,
-          role: selectedRole,
+          role: 'admin',
           avatar_url: user.photoURL,
           created_at: new Date().toISOString(),
         };
       }
 
-      const role = profile.role || selectedRole;
-      handleSuccessfulRedirect(role as any);
+      handleSuccessfulRedirect(profile.role as any || 'admin');
     } catch (err: any) {
       console.error('Login error:', err);
-      let message = 'An error occurred during login.';
+      let message = 'An error occurred during admin login.';
       if (
         err.code === 'auth/user-not-found' ||
         err.code === 'auth/wrong-password' ||
         err.code === 'auth/invalid-credential'
       ) {
-        message = 'Invalid email or password. Please verify your credentials.';
+        message = 'Invalid email or password. Please verify your admin credentials.';
       } else if (err.code === 'auth/too-many-requests') {
         message = 'Too many failed login attempts. Please try again in a few moments.';
       } else if (err.message) {
@@ -94,13 +89,13 @@ function LoginForm() {
 
       await createUserProfile(user.uid, {
         id: user.uid,
-        name: user.displayName || 'Google User',
+        name: user.displayName || 'Admin User',
         email: user.email || '',
-        role: selectedRole,
+        role: 'admin',
         avatar_url: user.photoURL,
       });
 
-      handleSuccessfulRedirect(selectedRole);
+      handleSuccessfulRedirect('admin');
     } catch (err: any) {
       console.error('Google Sign-In Error:', err);
       if (err.code === 'auth/popup-closed-by-user') {
@@ -120,94 +115,62 @@ function LoginForm() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2.5 mb-4 group">
           <div className="w-11 h-11 rounded-xl bg-[#1e3a5f] flex items-center justify-center text-white shadow-md group-hover:bg-[#152840] transition-colors">
-            <GraduationCap className="w-7 h-7" />
+            <Shield className="w-6 h-6 text-amber-400" />
           </div>
           <span className="text-2xl font-black text-[#1e3a5f]">SMART MIND</span>
         </Link>
         <h1 className="text-center text-2xl sm:text-3xl font-black text-slate-900">
-          Sign In to Your Account
+          Admin & Coordinator Portal
         </h1>
-        <p className="mt-1 text-center text-xs sm:text-sm text-slate-600">
-          PABSON Smart Mind Inter-School Quiz 2083
+        <p className="mt-1 text-center text-xs sm:text-sm text-slate-500">
+          Question Bank Management • Stage Competition • Analytics
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0 space-y-4">
+        {/* STUDENT NOTICE BANNER */}
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3 shadow-xs">
+          <GraduationCap className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-emerald-900">Are you a student?</p>
+            <p className="text-xs text-emerald-800 leading-relaxed">
+              You do <strong>not</strong> need to log in! You can practice all questions freely with instant solutions directly on the homepage.
+            </p>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 text-xs font-black text-emerald-900 hover:text-emerald-950 underline mt-1"
+            >
+              Go to Home Practice (No Login Required) →
+            </Link>
+          </div>
+        </div>
+
+        {/* ADMIN LOGIN CARD */}
         <div className="bg-white py-8 px-6 sm:px-10 shadow-xl rounded-2xl border border-slate-200 space-y-6">
+          <div className="flex items-center justify-between border-b pb-3">
+            <span className="text-xs font-bold uppercase text-slate-500 flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-indigo-600" /> Authorized Admin Sign In
+            </span>
+            <span className="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-full border border-indigo-200">
+              Admin Only
+            </span>
+          </div>
+
           {/* Intended Destination Notice */}
           {nextParam && (
-            <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start gap-2.5">
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold">Authentication Required</p>
-                <p className="text-blue-800">Please sign in to continue to: <code className="font-mono bg-blue-100 px-1 py-0.5 rounded">{nextParam}</code></p>
-              </div>
+              <span>Please sign in with administrator credentials to access: <code className="font-mono">{nextParam}</code></span>
             </div>
           )}
 
-          {/* Accessible Role Selector */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-700 block uppercase tracking-wider">
-              Select Your Access Portal
-            </label>
-            <div
-              role="radiogroup"
-              aria-label="Account Role Selection"
-              className="grid grid-cols-2 gap-3"
-            >
-              {/* Student Role */}
-              <button
-                type="button"
-                role="radio"
-                aria-checked={selectedRole === 'student'}
-                onClick={() => setSelectedRole('student')}
-                className={`p-3 rounded-xl border-2 flex flex-col items-center gap-1.5 transition-all min-h-[56px] cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  selectedRole === 'student'
-                    ? 'border-blue-600 bg-blue-50/70 text-blue-950 shadow-sm font-bold'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                }`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <GraduationCap className={`w-4 h-4 ${selectedRole === 'student' ? 'text-blue-600' : 'text-slate-400'}`} />
-                  <span className="text-xs">Student Portal</span>
-                </div>
-                {selectedRole === 'student' && (
-                  <span className="text-[10px] bg-blue-600 text-white px-2 py-0.2 rounded-full font-bold">Selected</span>
-                )}
-              </button>
-
-              {/* Admin Role */}
-              <button
-                type="button"
-                role="radio"
-                aria-checked={selectedRole === 'admin'}
-                onClick={() => setSelectedRole('admin')}
-                className={`p-3 rounded-xl border-2 flex flex-col items-center gap-1.5 transition-all min-h-[56px] cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                  selectedRole === 'admin'
-                    ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-sm font-bold'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                }`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <Shield className={`w-4 h-4 ${selectedRole === 'admin' ? 'text-indigo-600' : 'text-slate-400'}`} />
-                  <span className="text-xs">Admin / Host</span>
-                </div>
-                {selectedRole === 'admin' && (
-                  <span className="text-[10px] bg-indigo-600 text-white px-2 py-0.2 rounded-full font-bold">Selected</span>
-                )}
-              </button>
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2 animate-fade-in">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
-          </div>
-
-          {/* Error Message with aria-live */}
-          <div aria-live="polite" aria-atomic="true">
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2 animate-fade-in">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Google 1-Click Sign-In */}
           <Button
@@ -215,7 +178,7 @@ function LoginForm() {
             variant="outline"
             disabled={googleLoading || loading}
             onClick={handleGoogleSignIn}
-            className="w-full min-h-[44px] h-11 border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-3 font-semibold text-xs sm:text-sm text-slate-700 shadow-sm cursor-pointer"
+            className="w-full min-h-[44px] h-11 border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-3 font-semibold text-xs sm:text-sm text-slate-700 shadow-xs cursor-pointer"
           >
             {googleLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
@@ -239,7 +202,7 @@ function LoginForm() {
                 />
               </svg>
             )}
-            Sign in with Google
+            Sign in as Admin with Google
           </Button>
 
           <div className="relative">
@@ -247,7 +210,7 @@ function LoginForm() {
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-slate-400 font-medium">Or continue with email</span>
+              <span className="bg-white px-2 text-slate-400 font-medium">Or email sign in</span>
             </div>
           </div>
 
@@ -255,21 +218,21 @@ function LoginForm() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Email Address
+                Admin Email Address
               </label>
               <Input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@school.edu.np"
+                placeholder="admin@school.edu.np"
                 className="min-h-[44px] h-11 text-sm"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Password
+                Admin Password
               </label>
               <Input
                 type="password"
@@ -287,17 +250,14 @@ function LoginForm() {
               className="w-full min-h-[44px] h-11 bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold text-sm shadow-md cursor-pointer"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
-              Sign In to {selectedRole === 'admin' ? 'Admin Portal' : 'Student Portal'}
+              Access Admin Dashboard
             </Button>
           </form>
 
-          {/* Public Links */}
-          <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-            <Link href="/register" className="text-blue-600 hover:underline font-medium">
-              Don&apos;t have an account? Sign up
-            </Link>
-            <Link href="/demo" className="text-emerald-600 hover:underline font-bold">
-              Try Free Demo Quiz →
+          {/* Back to Home Practice */}
+          <div className="pt-2 border-t border-slate-100 text-center">
+            <Link href="/" className="text-xs text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1">
+              <BookOpen className="w-3.5 h-3.5" /> Return to Student Practice (Home)
             </Link>
           </div>
         </div>
