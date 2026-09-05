@@ -14,21 +14,17 @@ import {
   CheckCircle2,
   Users,
   Shield,
-  FileText,
   Clock,
-  HelpCircle,
-  ArrowRight,
   Sparkles,
   Globe,
   Compass,
   Atom,
-  Flame,
   Award,
 } from 'lucide-react';
 
 export const metadata = {
-  title: 'About PABSON Smart Mind Quiz Championship 2083 | Rules, Format & Syllabus',
-  description: 'Learn about the official PABSON Smart Mind Inter-School Quiz Competition format, round structures, syllabus categories, and preparation guidelines.',
+  title: 'About Smart Mind Quiz Championship 2083 | Rules, Format & Syllabus',
+  description: 'Learn about the official Smart Mind Inter-School Quiz Competition format, round structures, syllabus categories, and preparation guidelines.',
 };
 
 export default function AboutPage() {
@@ -67,7 +63,7 @@ export default function AboutPage() {
       color: 'bg-amber-50 text-amber-700 border-amber-200',
       time: '60s per team',
       marks: '+2 for each correct in 60 seconds',
-      desc: 'High-speed question sprint. Teams must answer as many direct questions as possible in 60 seconds without passing penalties.',
+      desc: 'High-speed question sprint. Teams answer direct questions as quickly as possible in 60 seconds.',
     },
     {
       number: 'Round 5',
@@ -76,7 +72,7 @@ export default function AboutPage() {
       color: 'bg-rose-50 text-rose-700 border-rose-200',
       time: '15s after buzz',
       marks: '+2 for correct, -1 for incorrect buzz',
-      desc: 'The ultimate decider round. Any team can hit the buzzer at any point. Quick reaction time and accuracy are critical.',
+      desc: 'The ultimate decider round. Any team can hit the buzzer. Fast reaction time and accuracy are critical.',
     },
   ];
 
@@ -100,20 +96,15 @@ export default function AboutPage() {
             Official Guidelines & Format
           </Badge>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#1e3a5f]">
-            PABSON Smart Mind Quiz Championship 2083
+            Smart Mind Quiz Championship 2083
           </h1>
           <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-            The premier inter-school knowledge competition bringing together top student scholars from across Nepal to compete in academic excellence, reaction speed, and multidisciplinary intellect.
+            The premier inter-school knowledge competition bringing together student scholars from across Nepal to compete in academic excellence, reaction speed, and multidisciplinary intellect.
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-3">
-            <Link href="/demo">
+            <Link href="/">
               <Button className="bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold min-h-[44px] px-6 cursor-pointer">
-                <Zap className="w-4 h-4 mr-2" /> Try Demo Quiz
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button variant="outline" className="min-h-[44px] px-6 font-semibold border-slate-300">
-                Register as Student <ArrowRight className="w-4 h-4 ml-2" />
+                <Zap className="w-4 h-4 mr-2" /> Start Free Practice Drills
               </Button>
             </Link>
           </div>
@@ -168,7 +159,7 @@ export default function AboutPage() {
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Curated Syllabus Topics</h2>
             <p className="text-sm text-slate-500 mt-1">
-              Verified question bank developed in accordance with national secondary education standards and international quiz bowl formats.
+              Verified question bank developed in accordance with national secondary education standards.
             </p>
           </div>
 
@@ -206,15 +197,15 @@ export default function AboutPage() {
             <CardContent className="space-y-3 text-xs text-slate-700">
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <p><strong>Personalized Mistake Vault:</strong> Automatically bookmarks every missed question for review until mastered.</p>
+                <p><strong>Instant Practice Drills:</strong> Practice all questions with instant solutions and explanations.</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <p><strong>Spacebar Buzzer Reaction Simulator:</strong> Practice millisecond reaction timings with authentic buzzer audio cues.</p>
+                <p><strong>Timed Practice Option:</strong> Test speed under competition pressure with countdown clocks.</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <p><strong>Rapid Fire Combo Multipliers:</strong> Build sustained focus under time pressure with ascending score streaks.</p>
+                <p><strong>Comprehensive Syllabus:</strong> Thorough coverage of Nepal Parichaya, Science, History, Math, and Current Affairs.</p>
               </div>
             </CardContent>
           </Card>
@@ -234,11 +225,11 @@ export default function AboutPage() {
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                <p><strong>1-Click Printable PDF Generator:</strong> Instantly generate printed test papers, OMR sheets, and coordinator solutions.</p>
+                <p><strong>1-Click Printable PDF Generator:</strong> Instantly generate printed test papers and coordinator solutions.</p>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                <p><strong>Bulk CSV/JSON Import:</strong> Add hundreds of custom school questions with automatic format validation.</p>
+                <p><strong>Bulk CSV/JSON Import:</strong> Add custom school questions with automatic format validation.</p>
               </div>
             </CardContent>
           </Card>
@@ -248,17 +239,12 @@ export default function AboutPage() {
         <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#1e3a5f] to-blue-900 text-white text-center space-y-4 shadow-xl">
           <h2 className="text-2xl sm:text-4xl font-black">Ready to Begin Your Championship Training?</h2>
           <p className="text-blue-200 max-w-xl mx-auto text-sm sm:text-base">
-            Take the free 5-question demo quiz right now without creating an account, or sign in to track your school ranking.
+            Practice all questions in one attempt right on the home page without requiring any login.
           </p>
-          <div className="pt-2 flex flex-wrap justify-center gap-4">
-            <Link href="/demo">
+          <div className="pt-2 flex justify-center">
+            <Link href="/">
               <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-8 min-h-[48px] shadow-lg cursor-pointer">
-                Try Demo Quiz Now
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button size="lg" variant="outline" className="text-white border-white/40 hover:bg-white/10 font-bold min-h-[48px] px-8">
-                Create Student Account
+                Start Practicing Now
               </Button>
             </Link>
           </div>

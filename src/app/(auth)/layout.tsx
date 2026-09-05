@@ -10,7 +10,7 @@ export default function AuthLayout({
           SMART MIND
         </h2>
         <p className="mt-2 text-sm text-gray-600">
-          PABSON Inter-School Quiz Training
+          National Inter-School Quiz Championship 2083
         </p>
       </div>
 

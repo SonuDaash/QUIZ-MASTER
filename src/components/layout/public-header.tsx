@@ -5,14 +5,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   GraduationCap,
-  Sparkles,
   Menu,
   X,
   BookOpen,
   Trophy,
   Shield,
   Info,
-  Lock,
 } from 'lucide-react';
 
 export function PublicHeader() {
@@ -31,7 +29,7 @@ export function PublicHeader() {
               SMART MIND
             </span>
             <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400 -mt-0.5">
-              PABSON QUIZ 2083
+              INTER-SCHOOL QUIZ 2083
             </span>
           </div>
         </Link>
@@ -68,9 +66,9 @@ export function PublicHeader() {
           <Link href="/login">
             <Button
               variant="outline"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-blue-700 font-bold text-xs sm:text-sm min-h-[40px] px-4 rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
+              className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-blue-700 font-bold text-xs sm:text-sm min-h-[38px] px-3.5 rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
             >
-              <Shield className="w-4 h-4 text-indigo-600" />
+              <Shield className="w-3.5 h-3.5 text-indigo-600" />
               Admin Portal
             </Button>
           </Link>
@@ -99,7 +97,7 @@ export function PublicHeader() {
             className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-900 min-h-[44px]"
           >
             <BookOpen className="w-5 h-5 text-blue-600" />
-            Practice Hub (Free Drills)
+            Practice Hub
           </Link>
           <Link
             href="/leaderboard"
@@ -121,7 +119,7 @@ export function PublicHeader() {
           <div className="pt-3 border-t border-slate-200 dark:border-slate-800">
             <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" className="w-full min-h-[44px] text-sm font-bold justify-center border-slate-300">
-                <Shield className="w-4 h-4 mr-2 text-indigo-600" /> Admin / Host Login
+                <Shield className="w-4 h-4 mr-2 text-indigo-600" /> Admin Portal
               </Button>
             </Link>
           </div>

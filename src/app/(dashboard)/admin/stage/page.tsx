@@ -148,7 +148,7 @@ export default function StageProjectorView() {
       <div className="flex items-center justify-between border-b border-slate-800 pb-4">
         <div className="flex items-center gap-3">
           <Badge className="bg-amber-500 text-slate-950 text-xs font-black uppercase px-3 py-1">
-            PABSON LIVE STAGE
+            SMART MIND LIVE STAGE
           </Badge>
           <span className="text-slate-400 font-mono text-sm">
             ROUND 1 · QUESTION {currentIndex + 1} OF {questions.length || 10}

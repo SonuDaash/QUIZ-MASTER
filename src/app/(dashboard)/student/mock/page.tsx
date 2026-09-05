@@ -58,7 +58,7 @@ export default function MockCompetitionPage() {
           <Medal className="h-8 w-8" />
         </div>
         <h1 className="text-3xl font-extrabold text-[#1e3a5f] uppercase tracking-wide">
-          PABSON Smart Mind
+          Smart Mind Championship
         </h1>
         <h2 className="text-lg text-slate-500 font-medium">Grand Mock Competition Simulation</h2>
       </div>

@@ -5,11 +5,11 @@ import { PublicFooter } from '@/components/layout/public-footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Medal, Award, Flame, Users, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Trophy, Users, ArrowRight } from 'lucide-react';
 
 export const metadata = {
-  title: 'Championship Leaderboard | PABSON Smart Mind 2083',
-  description: 'View the live rankings and performance records of schools and students in the PABSON Inter-School Quiz Championship 2083.',
+  title: 'Championship Leaderboard | Smart Mind 2083',
+  description: 'View the live rankings and performance records of schools and students in the Inter-School Quiz Championship 2083.',
 };
 
 export default function PublicLeaderboardPage() {
@@ -37,7 +37,7 @@ export default function PublicLeaderboardPage() {
             Inter-School Championship Leaderboard
           </h1>
           <p className="text-sm text-slate-600">
-            Real-time standings based on speed accuracy, buzzer performance, and mock round aggregates.
+            Real-time standings based on speed, accuracy, and practice performance aggregates.
           </p>
         </div>
 
@@ -109,16 +109,16 @@ export default function PublicLeaderboardPage() {
           </CardContent>
         </Card>
 
-        {/* Join CTA */}
+        {/* Practice CTA */}
         <div className="p-8 bg-slate-900 text-white rounded-2xl text-center space-y-4 shadow-md">
-          <h2 className="text-xl font-bold">Want Your School to Compete on the Leaderboard?</h2>
+          <h2 className="text-xl font-bold">Want to Sharpen Your Quiz Skills?</h2>
           <p className="text-xs text-slate-300 max-w-lg mx-auto">
-            Log in to your student profile or register your school team to start earning championship points in daily challenge sprints.
+            Practice all questions across Nepal Parichaya, Science, Geography, and Math directly on the home page.
           </p>
           <div className="flex justify-center gap-3">
-            <Link href="/register">
+            <Link href="/">
               <Button className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold min-h-[44px] px-6 cursor-pointer">
-                Register Student Account <ArrowRight className="w-4 h-4 ml-1.5" />
+                Start Free Practice Drills <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
           </div>

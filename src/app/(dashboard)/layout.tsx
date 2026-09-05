@@ -6,20 +6,20 @@ import { useEffect, useState } from 'react';
 import { AdminSidebar } from '@/components/layout/admin-sidebar';
 import { StudentNav } from '@/components/layout/student-nav';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
-import { Loader2, ShieldAlert, ArrowLeft, ShieldCheck, GraduationCap } from 'lucide-react';
+import { Loader2, ShieldAlert, ArrowLeft, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { isAuthorizedAdminEmail, ADMIN_EMAIL } from '@/lib/constants';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading, updateUserRole } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [switching, setSwitching] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -35,7 +35,7 @@ export default function DashboardLayout({
     }
   }, [user, loading, mounted, pathname, router]);
 
-  // Centered session checking state (No blank flashes)
+  // Centered session checking state
   if (!mounted || loading || !user) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 p-4">
@@ -54,21 +54,9 @@ export default function DashboardLayout({
   }
 
   const isAdminRoute = pathname.startsWith('/admin');
-  const isActualAdmin = user.role === 'admin';
+  const isActualAdmin = isAuthorizedAdminEmail(user.email);
 
-  const handleGrantAdmin = async () => {
-    setSwitching(true);
-    try {
-      await updateUserRole('admin');
-      router.refresh();
-    } catch (e) {
-      console.error('Failed to update role:', e);
-    } finally {
-      setSwitching(false);
-    }
-  };
-
-  // ACCESS CONTROL: If user is not admin and visits /admin, show explanation and 1-click admin promotion
+  // ACCESS CONTROL: If user is not authorized admin and visits /admin
   if (isAdminRoute && !isActualAdmin) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 p-6 text-center">
@@ -77,33 +65,19 @@ export default function DashboardLayout({
         </div>
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h1>
         <p className="max-w-md text-sm text-slate-600 mb-2">
-          Your account (<strong>{user.email || user.name}</strong>) is currently set to role: <span className="font-bold text-red-600 uppercase text-xs bg-red-50 px-2 py-0.5 rounded border border-red-200">Student</span>.
+          Your account (<strong>{user.email || user.name}</strong>) is not authorized as an administrator.
         </p>
-        <p className="max-w-md text-xs text-slate-400 mb-6">
-          The Admin Portal is restricted to quiz coordinators and administrators.
+        <p className="max-w-md text-xs text-slate-500 mb-6">
+          The Admin Portal is strictly restricted to administrator <code>{ADMIN_EMAIL}</code>.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <Link href="/student">
-            <Button variant="outline" className="flex items-center gap-2 cursor-pointer min-h-[44px]">
+          <Link href="/">
+            <Button className="bg-[#1e3a5f] hover:bg-[#152840] text-white flex items-center gap-2 cursor-pointer min-h-[44px]">
               <ArrowLeft className="w-4 h-4" />
-              Back to Student Dashboard
+              Return to Student Practice Hub
             </Button>
           </Link>
-
-          {/* 1-Click Promote to Admin */}
-          <Button 
-            onClick={handleGrantAdmin}
-            disabled={switching}
-            className="bg-[#1e3a5f] hover:bg-[#152840] text-white flex items-center gap-2 cursor-pointer font-bold shadow-md min-h-[44px]"
-          >
-            {switching ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-            )}
-            Grant Admin Role to this Account
-          </Button>
         </div>
       </div>
     );

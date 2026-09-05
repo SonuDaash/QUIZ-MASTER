@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
-  GraduationCap,
   Trophy,
   BookOpen,
   Zap,
@@ -24,14 +23,12 @@ import {
   VolumeX,
   Compass,
   Atom,
-  HelpCircle,
   Award,
   Layers,
+  Flame,
   Check,
   ChevronRight,
-  RefreshCw,
-  Flame,
-  ShieldAlert,
+  Play,
 } from 'lucide-react';
 import { soundFx } from '@/lib/audio';
 import { getQuestions } from '@/lib/firebase/firestore';
@@ -40,7 +37,6 @@ import { COMPREHENSIVE_QUESTION_BANK, type PracticeQuestion } from '@/lib/data/d
 export default function HomePage() {
   // Questions state
   const [allQuestions, setAllQuestions] = useState<PracticeQuestion[]>(COMPREHENSIVE_QUESTION_BANK);
-  const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   
   // Practice session states
@@ -63,10 +59,9 @@ export default function HomePage() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showQuestionDrawer, setShowQuestionDrawer] = useState(false);
 
-  // Load questions from Firestore merged with fallback
+  // Load questions from Firestore merged with default bank
   useEffect(() => {
     async function loadFirestoreQuestions() {
-      setLoadingQuestions(true);
       try {
         const firestoreQs = await getQuestions({});
         if (firestoreQs && firestoreQs.length > 0) {
@@ -82,7 +77,8 @@ export default function HomePage() {
             subject_id: fq.subject_id,
             difficulty: (fq.difficulty as any) || 'easy',
             time_limit: fq.time_limit || 30,
-            explanation: fq.explanation || 'Verified answer for PABSON competition syllabus.',
+            explanation: fq.explanation || 'Official verified answer for the National Inter-School Quiz syllabus.',
+            marks: fq.marks || 1,
             question_options: (((fq as any).question_options || fq.options) && ((fq as any).question_options || fq.options).length > 0)
               ? ((fq as any).question_options || fq.options).map((opt: any, idx: number) => ({
                   id: opt.id || `opt_${idx}`,
@@ -96,7 +92,6 @@ export default function HomePage() {
                 ],
           }));
 
-          // Merge without duplicate IDs
           const existingIds = new Set(mappedFirestore.map(q => q.id));
           const combined = [
             ...mappedFirestore,
@@ -106,8 +101,6 @@ export default function HomePage() {
         }
       } catch (err) {
         console.error('Error fetching questions, using built-in bank:', err);
-      } finally {
-        setLoadingQuestions(false);
       }
     }
     loadFirestoreQuestions();
@@ -121,7 +114,7 @@ export default function HomePage() {
 
   const currentQ = activeQuestions[currentIndex] || activeQuestions[0];
 
-  // Reset answer selection when question changes
+  // Synchronize selection state when question changes
   useEffect(() => {
     if (!currentQ) return;
     const previousAnswer = userAnswers[currentQ.id];
@@ -248,7 +241,7 @@ export default function HomePage() {
     { name: 'All', label: '🎯 All Questions', count: allQuestions.length },
     { name: 'Nepal Parichaya', label: '🇳🇵 Nepal Parichaya', count: allQuestions.filter(q => q.category === 'Nepal Parichaya').length },
     { name: 'Science', label: '🔬 Science & Nature', count: allQuestions.filter(q => q.category === 'Science').length },
-    { name: 'Geography', label: '🗺️ World Geography', count: allQuestions.filter(q => q.category === 'Geography').length },
+    { name: 'Geography', label: '🗺️ Geography', count: allQuestions.filter(q => q.category === 'Geography').length },
     { name: 'History', label: '🏛️ History', count: allQuestions.filter(q => q.category === 'History').length },
     { name: 'Mathematics', label: '📐 Mathematics', count: allQuestions.filter(q => q.category === 'Mathematics').length },
     { name: 'Computer & Tech', label: '💻 Computer & ICT', count: allQuestions.filter(q => q.category === 'Computer & Tech').length },
@@ -259,49 +252,49 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-100">
       <PublicHeader />
 
-      <main className="flex-1 pb-16">
-        {/* HERO / NOTICE BANNER */}
-        <section className="bg-gradient-to-r from-[#1e3a5f] via-blue-900 to-[#1e3a5f] text-white pt-8 pb-10 px-4 sm:px-6 lg:px-8 border-b border-blue-950 shadow-md">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider border border-amber-400/30">
-                <Sparkles className="w-3.5 h-3.5" />
-                Free Practice Portal • No Student Login Required
+      <main className="flex-1 pb-12">
+        {/* COMPACT CLEAN HERO BANNER */}
+        <section className="bg-gradient-to-r from-[#1e3a5f] via-blue-900 to-[#1e3a5f] text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-blue-950 shadow-sm">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1 text-center sm:text-left">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[11px] font-black uppercase tracking-wider border border-amber-400/30">
+                <Sparkles className="w-3 h-3" />
+                Student Practice Hub • Free Instant Access
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
-                PABSON Smart Mind Quiz Practice 2083
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight">
+                National Inter-School Quiz Practice 2083
               </h1>
-              <p className="text-xs sm:text-sm text-blue-200 max-w-xl">
-                Test your knowledge across all subjects in <strong>one single attempt</strong> with instant solutions and zero sign-in barriers!
+              <p className="text-xs text-blue-200">
+                Practice all questions in <strong>one single attempt</strong> with instant solutions and explanations!
               </p>
             </div>
 
-            {/* Quick Stats Pill */}
-            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 shrink-0">
-              <div className="text-center">
-                <p className="text-[10px] text-blue-200 uppercase font-bold">Total Questions</p>
-                <p className="text-xl font-black text-amber-300">{allQuestions.length}</p>
+            {/* Quick Live Stats */}
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shrink-0 text-center">
+              <div>
+                <p className="text-[10px] text-blue-200 uppercase font-bold">Total</p>
+                <p className="text-lg font-black text-amber-300">{allQuestions.length} Qs</p>
               </div>
-              <div className="w-px h-8 bg-white/20" />
-              <div className="text-center">
-                <p className="text-[10px] text-blue-200 uppercase font-bold">Completed</p>
-                <p className="text-xl font-black text-emerald-300">{answeredCount}/{activeQuestions.length}</p>
+              <div className="w-px h-6 bg-white/20" />
+              <div>
+                <p className="text-[10px] text-blue-200 uppercase font-bold">Done</p>
+                <p className="text-lg font-black text-emerald-300">{answeredCount}/{activeQuestions.length}</p>
               </div>
-              <div className="w-px h-8 bg-white/20" />
-              <div className="text-center">
+              <div className="w-px h-6 bg-white/20" />
+              <div>
                 <p className="text-[10px] text-blue-200 uppercase font-bold">Accuracy</p>
-                <p className="text-xl font-black text-white">{accuracy}%</p>
+                <p className="text-lg font-black text-white">{accuracy}%</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SUBJECT SELECTION BAR */}
+        {/* CLEAN CATEGORY SLIDE BAR WITHOUT EMPTY SPACE OR UGLY SCROLLBARS */}
         <section className="bg-white border-b border-slate-200 sticky top-16 z-40 shadow-xs">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              <span className="text-xs font-bold text-slate-400 uppercase mr-1 shrink-0 flex items-center gap-1">
-                <Layers className="w-3.5 h-3.5" /> Category:
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-0.5">
+              <span className="text-[11px] font-bold text-slate-400 uppercase mr-1 shrink-0 flex items-center gap-1">
+                <Layers className="w-3.5 h-3.5" /> Subject:
               </span>
               {categories.map((cat) => {
                 const isSelected = selectedCategory === cat.name;
@@ -309,15 +302,15 @@ export default function HomePage() {
                   <button
                     key={cat.name}
                     onClick={() => handleCategoryChange(cat.name)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-[#1e3a5f] text-white shadow-sm ring-2 ring-blue-400/40'
+                        ? 'bg-[#1e3a5f] text-white shadow-xs ring-2 ring-blue-400/40'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     <span>{cat.label}</span>
                     <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      className={`text-[10px] px-1.5 py-0.1 rounded-full font-mono ${
                         isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'
                       }`}
                     >
@@ -330,34 +323,34 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* MAIN TEST CONTAINER */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        {/* MAIN PRACTICE TEST INTERFACE */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-5">
           {!isCompleted && currentQ ? (
-            <div className="space-y-5 animate-fade-in">
-              {/* TOP CONTROLS & STATUS BAR */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 font-bold px-3 py-1 text-xs">
+            <div className="space-y-4 animate-fade-in">
+              {/* TOP STATUS BAR */}
+              <div className="bg-white px-4 py-3 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 font-bold px-2.5 py-0.5 text-xs">
                     {currentQ.category}
                   </Badge>
-                  <span className="text-sm font-extrabold text-slate-800">
-                    Question <span className="text-blue-600 font-mono text-base">{currentIndex + 1}</span> of {activeQuestions.length}
+                  <span className="text-xs sm:text-sm font-extrabold text-slate-800">
+                    Question <span className="text-blue-600 font-mono text-base">{currentIndex + 1}</span> / {activeQuestions.length}
                   </span>
                 </div>
 
-                {/* Score Ticker & Toggles */}
-                <div className="flex items-center gap-3">
-                  {/* Live Mini Score */}
-                  <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-bold font-mono text-slate-700">
+                {/* Score & Controls */}
+                <div className="flex items-center gap-2.5">
+                  {/* Score */}
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-full text-xs font-bold font-mono text-slate-700">
                     <span className="text-emerald-600">✓ {correctCount}</span>
                     <span className="text-slate-300">|</span>
                     <span className="text-rose-600">✗ {incorrectCount}</span>
                   </div>
 
-                  {/* Timer Toggle & Display */}
+                  {/* Timer */}
                   {timerEnabled && (
                     <div
-                      className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-xs font-bold border transition-colors ${
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-full font-mono text-xs font-bold border transition-colors ${
                         timeLeft <= 5
                           ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse'
                           : 'bg-slate-50 text-slate-700 border-slate-200'
@@ -368,44 +361,44 @@ export default function HomePage() {
                     </div>
                   )}
 
-                  {/* Sound FX Toggle */}
+                  {/* Audio */}
                   <button
                     onClick={() => setSoundEnabled(!soundEnabled)}
-                    title={soundEnabled ? 'Mute Sound Effects' : 'Enable Sound Effects'}
-                    className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                    title={soundEnabled ? 'Mute Audio' : 'Enable Audio'}
+                    className="p-1 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
                   >
                     {soundEnabled ? <Volume2 className="w-4 h-4 text-blue-600" /> : <VolumeX className="w-4 h-4" />}
                   </button>
 
-                  {/* Question Navigator Drawer Button */}
+                  {/* Jump Grid Drawer Button */}
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setShowQuestionDrawer(!showQuestionDrawer)}
-                    className="text-xs font-bold cursor-pointer h-8 px-2.5"
+                    className="text-xs font-bold cursor-pointer h-7 px-2.5"
                   >
-                    <Layers className="w-3.5 h-3.5 mr-1 text-blue-600" />
+                    <Layers className="w-3 h-3 mr-1 text-blue-600" />
                     All ({activeQuestions.length})
                   </Button>
                 </div>
               </div>
 
               {/* Progress Bar */}
-              <Progress value={progressPercent} className="h-2 bg-slate-200 rounded-full" />
+              <Progress value={progressPercent} className="h-1.5 bg-slate-200 rounded-full" />
 
               {/* POPUP QUESTION NAVIGATOR GRID */}
               {showQuestionDrawer && (
-                <div className="bg-white p-4 rounded-2xl border border-blue-200 shadow-md space-y-3 animate-fade-in">
+                <div className="bg-white p-4 rounded-xl border border-blue-200 shadow-md space-y-2.5 animate-fade-in">
                   <div className="flex items-center justify-between border-b pb-2">
                     <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                      <Layers className="w-4 h-4 text-blue-600" /> Jump to Question
+                      <Layers className="w-4 h-4 text-blue-600" /> Question Palette
                     </span>
-                    <span className="text-xs text-slate-500">
-                      🟢 Correct • 🔴 Incorrect • ⚪ Unanswered
+                    <span className="text-[11px] text-slate-500">
+                      🟢 Correct • 🔴 Incorrect • ⚪ Pending
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-2 max-h-48 overflow-y-auto p-1">
+                  <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-1.5 max-h-44 overflow-y-auto p-1">
                     {activeQuestions.map((q, idx) => {
                       const ans = userAnswers[q.id];
                       const isCurrent = idx === currentIndex;
@@ -424,7 +417,7 @@ export default function HomePage() {
                             handleJumpToQuestion(idx);
                             setShowQuestionDrawer(false);
                           }}
-                          className={`h-9 rounded-xl text-xs border flex items-center justify-center font-mono transition-all cursor-pointer ${btnColor} ${
+                          className={`h-8 rounded-lg text-xs border flex items-center justify-center font-mono transition-all cursor-pointer ${btnColor} ${
                             isCurrent ? 'ring-2 ring-blue-600 ring-offset-2 scale-105 shadow-sm' : ''
                           }`}
                         >
@@ -437,33 +430,33 @@ export default function HomePage() {
               )}
 
               {/* QUESTION CARD */}
-              <Card className="border border-slate-200 shadow-lg rounded-2xl overflow-hidden bg-white">
-                <CardContent className="p-6 sm:p-8 space-y-6">
-                  {/* Question Text */}
-                  <div className="space-y-2">
+              <Card className="border border-slate-200 shadow-md rounded-2xl overflow-hidden bg-white">
+                <CardContent className="p-5 sm:p-7 space-y-5">
+                  {/* Question Header */}
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-mono font-bold text-slate-400">Q{currentIndex + 1}.</span>
                       <Badge variant="outline" className="text-[10px] uppercase font-mono bg-slate-50">
                         {currentQ.difficulty} • 1 Mark
                       </Badge>
                     </div>
-                    <h2 className="text-lg sm:text-2xl font-black text-slate-900 leading-snug">
+                    <h2 className="text-base sm:text-xl font-black text-slate-900 leading-snug">
                       {currentQ.question_text}
                     </h2>
                   </div>
 
                   {/* 4 Interactive Option Buttons */}
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-2.5">
                     {currentQ.question_options.map((opt) => {
                       const isSelected = selectedOptionLabel === opt.option_label;
                       const isCorrectAnswer = opt.is_correct;
 
                       let btnStyle =
-                        'w-full min-h-[52px] p-4 rounded-xl border-2 font-medium flex items-center justify-between transition-all duration-150 text-left cursor-pointer ';
+                        'w-full min-h-[48px] p-3.5 rounded-xl border-2 font-medium flex items-center justify-between transition-all duration-150 text-left cursor-pointer ';
 
                       if (isAnswerSubmitted) {
                         if (isCorrectAnswer) {
-                          btnStyle += 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-sm';
+                          btnStyle += 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-xs';
                         } else if (isSelected && !isCorrectAnswer) {
                           btnStyle += 'bg-rose-50 border-rose-500 text-rose-950 font-semibold';
                         } else {
@@ -473,7 +466,7 @@ export default function HomePage() {
                         btnStyle += 'bg-blue-50 border-blue-600 text-blue-950 font-bold';
                       } else {
                         btnStyle +=
-                          'bg-white border-slate-200 text-slate-800 hover:border-blue-400 hover:bg-blue-50/50 hover:shadow-xs';
+                          'bg-white border-slate-200 text-slate-800 hover:border-blue-400 hover:bg-blue-50/40 hover:shadow-2xs';
                       }
 
                       return (
@@ -483,9 +476,9 @@ export default function HomePage() {
                           onClick={() => handleSelectOption(opt.option_label)}
                           className={btnStyle}
                         >
-                          <div className="flex items-center gap-3.5">
+                          <div className="flex items-center gap-3">
                             <span
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
                                 isAnswerSubmitted && isCorrectAnswer
                                   ? 'bg-emerald-600 text-white'
                                   : isAnswerSubmitted && isSelected && !isCorrectAnswer
@@ -495,27 +488,27 @@ export default function HomePage() {
                             >
                               {opt.option_label}
                             </span>
-                            <span className="text-sm sm:text-base font-semibold leading-snug">
+                            <span className="text-xs sm:text-sm font-semibold leading-snug">
                               {opt.option_text}
                             </span>
                           </div>
 
                           {isAnswerSubmitted && isCorrectAnswer && (
-                            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                           )}
                           {isAnswerSubmitted && isSelected && !isCorrectAnswer && (
-                            <XCircle className="w-5 h-5 text-rose-600 shrink-0" />
+                            <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
                           )}
                         </button>
                       );
                     })}
                   </div>
 
-                  {/* INSTANT EXPLANATION BANNER */}
+                  {/* INSTANT EXPLANATION BOX */}
                   {isAnswerSubmitted && (
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl space-y-1.5 text-xs sm:text-sm text-blue-950 animate-fade-in">
+                    <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl space-y-1 text-xs text-blue-950 animate-fade-in">
                       <div className="flex items-center gap-1.5 font-black text-blue-900">
-                        <Sparkles className="w-4 h-4 text-amber-500" />
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                         <span>Official Solution & Explanation:</span>
                       </div>
                       <p className="leading-relaxed pl-5">{currentQ.explanation}</p>
@@ -524,14 +517,14 @@ export default function HomePage() {
                 </CardContent>
 
                 {/* BOTTOM NAVIGATION ACTIONS */}
-                <div className="bg-slate-50 border-t border-slate-100 p-4 sm:px-8 flex flex-wrap items-center justify-between gap-3">
+                <div className="bg-slate-50 border-t border-slate-100 px-5 py-3 sm:px-7 flex items-center justify-between gap-3">
                   <Button
                     variant="outline"
                     disabled={currentIndex === 0}
                     onClick={handlePrevious}
-                    className="text-xs font-bold cursor-pointer h-10 px-4"
+                    className="text-xs font-bold cursor-pointer h-9 px-3.5"
                   >
-                    <ArrowLeft className="w-4 h-4 mr-1.5" /> Previous
+                    <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Previous
                   </Button>
 
                   <div className="flex items-center gap-2">
@@ -539,23 +532,23 @@ export default function HomePage() {
                       <Button
                         variant="ghost"
                         onClick={() => handleSelectOption(null)}
-                        className="text-xs text-slate-500 hover:text-slate-800 cursor-pointer h-10 px-3"
+                        className="text-xs text-slate-500 hover:text-slate-800 cursor-pointer h-9 px-3"
                       >
-                        Skip Question
+                        Skip
                       </Button>
                     )}
 
                     <Button
                       onClick={handleNext}
-                      className="bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold text-xs sm:text-sm h-10 px-6 cursor-pointer shadow-md"
+                      className="bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold text-xs sm:text-sm h-9 px-5 cursor-pointer shadow-sm"
                     >
                       {currentIndex < activeQuestions.length - 1 ? (
                         <>
-                          Next Question <ArrowRight className="w-4 h-4 ml-1.5" />
+                          Next Question <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </>
                       ) : (
                         <>
-                          Finish Attempt & View Scorecard <Award className="w-4 h-4 ml-1.5" />
+                          Finish Attempt <Award className="w-3.5 h-3.5 ml-1" />
                         </>
                       )}
                     </Button>
@@ -565,80 +558,80 @@ export default function HomePage() {
             </div>
           ) : (
             /* COMPREHENSIVE SCORECARD ATTEMPT REPORT */
-            <div className="space-y-6 animate-fade-in">
-              <Card className="border border-slate-200 shadow-xl overflow-hidden rounded-3xl">
+            <div className="space-y-5 animate-fade-in">
+              <Card className="border border-slate-200 shadow-lg overflow-hidden rounded-2xl">
                 {/* Header Trophy Banner */}
-                <div className="bg-gradient-to-br from-[#1e3a5f] via-blue-900 to-[#1e3a5f] text-white p-8 text-center space-y-3">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center mx-auto shadow-lg">
-                    <Trophy className="w-9 h-9" />
+                <div className="bg-gradient-to-br from-[#1e3a5f] via-blue-900 to-[#1e3a5f] text-white p-6 text-center space-y-2.5">
+                  <div className="w-12 h-12 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center mx-auto shadow-md">
+                    <Trophy className="w-7 h-7" />
                   </div>
-                  <Badge className="bg-amber-400 text-slate-950 font-extrabold uppercase px-3 py-1 text-xs">
+                  <Badge className="bg-amber-400 text-slate-950 font-extrabold uppercase px-2.5 py-0.5 text-[10px]">
                     Attempt Complete
                   </Badge>
-                  <h1 className="text-3xl sm:text-4xl font-black">Your Practice Scorecard</h1>
+                  <h1 className="text-2xl sm:text-3xl font-black">Your Practice Scorecard</h1>
                   
-                  <div className="flex items-baseline justify-center gap-2 pt-1">
-                    <span className="text-6xl font-black text-amber-300 font-mono">{correctCount}</span>
-                    <span className="text-2xl text-blue-200 font-semibold font-mono">/ {activeQuestions.length}</span>
+                  <div className="flex items-baseline justify-center gap-1.5 pt-0.5">
+                    <span className="text-5xl font-black text-amber-300 font-mono">{correctCount}</span>
+                    <span className="text-xl text-blue-200 font-semibold font-mono">/ {activeQuestions.length}</span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-blue-200 max-w-md mx-auto">
+                  <p className="text-xs text-blue-200 max-w-md mx-auto">
                     {accuracy >= 80
                       ? '🌟 Outstanding performance! Excellent mastery across the competition syllabus.'
                       : accuracy >= 50
-                      ? '👍 Great effort! Review the missed questions below to sharpen your final score.'
-                      : '📚 Keep practicing! Frequent drills in all subjects will boost your championship speed and accuracy.'}
+                      ? '👍 Great effort! Review the missed questions below to sharpen your knowledge.'
+                      : '📚 Keep practicing! Consistent drills will boost your championship speed and accuracy.'}
                   </p>
                 </div>
 
-                <CardContent className="p-6 sm:p-8 space-y-6">
+                <CardContent className="p-5 sm:p-7 space-y-5">
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                    <div className="p-3.5 bg-slate-50 border rounded-2xl">
-                      <p className="text-xs font-semibold text-slate-500">Accuracy</p>
-                      <p className="text-2xl font-black text-blue-900 mt-1 font-mono">{accuracy}%</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <p className="text-[11px] font-semibold text-slate-500">Accuracy</p>
+                      <p className="text-xl font-black text-blue-900 mt-0.5 font-mono">{accuracy}%</p>
                     </div>
-                    <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl">
-                      <p className="text-xs font-semibold text-emerald-700">Correct</p>
-                      <p className="text-2xl font-black text-emerald-700 mt-1 font-mono">{correctCount}</p>
+                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                      <p className="text-[11px] font-semibold text-emerald-700">Correct</p>
+                      <p className="text-xl font-black text-emerald-700 mt-0.5 font-mono">{correctCount}</p>
                     </div>
-                    <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl">
-                      <p className="text-xs font-semibold text-rose-700">Incorrect</p>
-                      <p className="text-2xl font-black text-rose-700 mt-1 font-mono">{incorrectCount}</p>
+                    <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                      <p className="text-[11px] font-semibold text-rose-700">Incorrect</p>
+                      <p className="text-xl font-black text-rose-700 mt-0.5 font-mono">{incorrectCount}</p>
                     </div>
-                    <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl">
-                      <p className="text-xs font-semibold text-amber-700">Skipped</p>
-                      <p className="text-2xl font-black text-amber-700 mt-1 font-mono">{skippedCount}</p>
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                      <p className="text-[11px] font-semibold text-amber-700">Skipped</p>
+                      <p className="text-xl font-black text-amber-700 mt-0.5 font-mono">{skippedCount}</p>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                  <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
                     <Button
                       onClick={() => handleRestart(false)}
-                      className="bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold h-11 px-6 rounded-xl cursor-pointer shadow-md"
+                      className="bg-[#1e3a5f] hover:bg-[#152840] text-white font-bold h-10 px-5 rounded-xl cursor-pointer shadow-sm"
                     >
-                      <RotateCcw className="w-4 h-4 mr-2" /> Retake All Questions ({activeQuestions.length})
+                      <RotateCcw className="w-3.5 h-3.5 mr-1.5" /> Retake All ({activeQuestions.length})
                     </Button>
 
                     {incorrectCount + skippedCount > 0 && (
                       <Button
                         variant="outline"
                         onClick={() => handleRestart(true)}
-                        className="border-rose-300 text-rose-700 hover:bg-rose-50 font-bold h-11 px-5 rounded-xl cursor-pointer"
+                        className="border-rose-300 text-rose-700 hover:bg-rose-50 font-bold h-10 px-4 rounded-xl cursor-pointer"
                       >
-                        <Flame className="w-4 h-4 mr-2 text-rose-600" /> Retry Missed Questions Only ({incorrectCount + skippedCount})
+                        <Flame className="w-3.5 h-3.5 mr-1.5 text-rose-600" /> Retry Missed Only ({incorrectCount + skippedCount})
                       </Button>
                     )}
                   </div>
 
                   {/* DETAILED QUESTION REVIEW LIST */}
-                  <div className="space-y-4 pt-4 border-t border-slate-200">
-                    <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-blue-600" /> Question-by-Question Review
+                  <div className="space-y-3 pt-3 border-t border-slate-200">
+                    <h3 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4 text-blue-600" /> Question-by-Question Review
                     </h3>
 
-                    <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                    <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
                       {activeQuestions.map((q, idx) => {
                         const ans = userAnswers[q.id];
                         const correctOpt = q.question_options.find(o => o.is_correct);
@@ -647,38 +640,38 @@ export default function HomePage() {
                         return (
                           <div
                             key={q.id}
-                            className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-2 transition-all ${
+                            className={`p-3.5 rounded-xl border text-xs space-y-1.5 transition-all ${
                               isCorrect
                                 ? 'bg-emerald-50/50 border-emerald-200'
                                 : 'bg-rose-50/50 border-rose-200'
                             }`}
                           >
-                            <div className="flex items-start justify-between gap-3">
-                              <p className="font-bold text-slate-900">
-                                <span className="font-mono text-slate-500 mr-1.5">{idx + 1}.</span>
+                            <div className="flex items-start justify-between gap-2.5">
+                              <p className="font-bold text-slate-900 leading-snug">
+                                <span className="font-mono text-slate-500 mr-1">{idx + 1}.</span>
                                 {q.question_text}
                               </p>
                               {isCorrect ? (
-                                <Badge className="bg-emerald-100 text-emerald-800 border-none font-bold shrink-0">
+                                <Badge className="bg-emerald-100 text-emerald-800 border-none font-bold shrink-0 text-[10px]">
                                   ✓ Correct
                                 </Badge>
                               ) : (
-                                <Badge className="bg-rose-100 text-rose-800 border-none font-bold shrink-0">
+                                <Badge className="bg-rose-100 text-rose-800 border-none font-bold shrink-0 text-[10px]">
                                   ✗ {ans?.selectedOptionLabel ? 'Incorrect' : 'Skipped'}
                                 </Badge>
                               )}
                             </div>
 
-                            <div className="text-xs text-slate-600 space-y-0.5">
+                            <div className="text-[11px] text-slate-600 space-y-0.5">
                               <p>
-                                🎯 Correct Answer: <strong className="text-emerald-700">{correctOpt?.option_label}. {correctOpt?.option_text}</strong>
+                                🎯 Correct: <strong className="text-emerald-700">{correctOpt?.option_label}. {correctOpt?.option_text}</strong>
                               </p>
                               {ans?.selectedOptionLabel && !isCorrect && (
                                 <p>
                                   Your Choice: <span className="text-rose-600 font-semibold">{ans.selectedOptionLabel}</span>
                                 </p>
                               )}
-                              <p className="text-slate-500 pt-1 border-t border-slate-200/50">
+                              <p className="text-slate-500 pt-0.5 border-t border-slate-200/50">
                                 💡 <em>{q.explanation}</em>
                               </p>
                             </div>
@@ -693,30 +686,30 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* SYLLABUS HIGHLIGHTS */}
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 space-y-6">
-          <div className="text-center max-w-2xl mx-auto space-y-1">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900">Comprehensive Curriculum Covered</h2>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Designed according to PABSON national quiz championship guidelines.
+        {/* CURRICULUM OVERVIEW CARDS */}
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-4">
+          <div className="text-center max-w-xl mx-auto space-y-1">
+            <h2 className="text-lg sm:text-xl font-black text-slate-900">Comprehensive Curriculum Covered</h2>
+            <p className="text-xs text-slate-500">
+              Structured according to secondary education national quiz guidelines.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { title: 'Nepal Parichaya', desc: 'Geography, History, Culture & Constitution of Nepal', icon: Compass, color: 'text-rose-600 bg-rose-50' },
+              { title: 'Nepal Parichaya', desc: 'Geography, History, Culture & Heritage of Nepal', icon: Compass, color: 'text-rose-600 bg-rose-50' },
               { title: 'Science & Nature', desc: 'Physics, Chemistry, Biology & Space Missions', icon: Atom, color: 'text-emerald-600 bg-emerald-50' },
-              { title: 'Math & Logic', desc: 'Arithmetic, Algebra, Geometry & Mental Aptitude', icon: Sparkles, color: 'text-blue-600 bg-blue-50' },
-              { title: 'Current Affairs', desc: 'National & Global Summits, Sports, Technology', icon: Zap, color: 'text-amber-600 bg-amber-50' },
+              { title: 'Math & Logic', desc: 'Arithmetic, Algebra, Geometry & Aptitude', icon: Sparkles, color: 'text-blue-600 bg-blue-50' },
+              { title: 'Current Affairs', desc: 'National & Global Summits, Sports & Technology', icon: Zap, color: 'text-amber-600 bg-amber-50' },
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
-                    <Icon className="w-5 h-5" />
+                <div key={item.title} className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-1.5">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.color}`}>
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <h3 className="font-bold text-sm text-slate-900">{item.title}</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+                  <h3 className="font-bold text-xs sm:text-sm text-slate-900">{item.title}</h3>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">{item.desc}</p>
                 </div>
               );
             })}

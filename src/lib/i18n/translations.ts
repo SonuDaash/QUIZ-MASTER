@@ -3,7 +3,7 @@ export type Language = 'en' | 'ne';
 export const translations = {
   en: {
     appName: 'Smart Mind',
-    tagline: 'PABSON Inter-School Quiz Championship',
+    tagline: 'National Inter-School Quiz Championship',
     practice: 'Practice Mode',
     mockQuiz: 'Mock Competition',
     rapidFire: 'Rapid Fire',
@@ -25,7 +25,7 @@ export const translations = {
   },
   ne: {
     appName: 'स्मार्ट माइन्ड',
-    tagline: 'प्याब्सन अन्तर-विद्यालय हाजिरीजवाफ प्रतियोगिता',
+    tagline: 'अन्तर-विद्यालय हाजिरीजवाफ प्रतियोगिता',
     practice: 'अभ्यास मोड',
     mockQuiz: 'नमुना प्रतियोगिता',
     rapidFire: 'र्यापिड फायर',

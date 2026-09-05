@@ -89,7 +89,7 @@ export default function SubjectPracticeConfigPage({ params }: { params: Promise<
         <div>
           <h1 className="text-3xl font-bold text-slate-900">{subject?.name || 'Subject Practice'}</h1>
           <p className="text-slate-500 mt-1">
-            {subject?.description || 'Customizable practice quiz tailored for PABSON competition preparation.'}
+            {subject?.description || 'Customizable practice quiz tailored for inter-school quiz competition preparation.'}
           </p>
         </div>
         <Button 

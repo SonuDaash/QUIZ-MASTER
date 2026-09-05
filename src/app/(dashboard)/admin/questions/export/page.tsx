@@ -13,7 +13,7 @@ export default function ExportQuizPaperPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [selectedSubject, setSelectedSubject] = useState('all');
-  const [paperTitle, setPaperTitle] = useState('PABSON Inter-School Quiz Championship 2083');
+  const [paperTitle, setPaperTitle] = useState('Smart Mind Inter-School Quiz Championship 2083');
   const [schoolName, setSchoolName] = useState('Central Organizing Committee');
   const [examTime, setExamTime] = useState('45 Minutes');
   const [fullMarks, setFullMarks] = useState('50');

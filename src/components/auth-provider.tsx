@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut as firebaseSignOut, type User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/lib/firebase/client';
 import { getUserProfile, getStudentProfile, createUserProfile } from '@/lib/firebase/firestore';
+import { isAuthorizedAdminEmail } from '@/lib/constants';
 import type { Profile, Student, UserRole } from '@/lib/types';
 
 interface AuthContextType {
@@ -45,10 +46,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
+        const isAdmin = isAuthorizedAdminEmail(authUser.email);
+        const resolvedRole: UserRole = isAdmin ? 'admin' : 'student';
+
         const profile = await getUserProfile(authUser.uid);
         if (profile) {
-          setUser(profile);
-          if (profile.role === 'student') {
+          // Enforce role based on authorized admin email
+          const currentRole: UserRole = isAdmin ? 'admin' : 'student';
+          const updatedProfile: Profile = { ...profile, role: currentRole };
+          setUser(updatedProfile);
+          if (currentRole === 'student') {
             const studentData = await getStudentProfile(authUser.uid);
             setStudent(studentData);
           }
@@ -56,9 +63,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Default profile if not exists
           const newProfile: Profile = {
             id: authUser.uid,
-            name: authUser.displayName || authUser.email?.split('@')[0] || 'User',
+            name: authUser.displayName || authUser.email?.split('@')[0] || (isAdmin ? 'Admin' : 'Student'),
             email: authUser.email || '',
-            role: 'student',
+            role: resolvedRole,
             avatar_url: authUser.photoURL,
             created_at: new Date().toISOString(),
           };
@@ -88,9 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateUserRole = async (newRole: UserRole) => {
     if (!user) return;
+    const allowedRole: UserRole = isAuthorizedAdminEmail(user.email) ? 'admin' : 'student';
     try {
-      await createUserProfile(user.id, { role: newRole });
-      setUser(prev => prev ? { ...prev, role: newRole } : null);
+      await createUserProfile(user.id, { role: allowedRole });
+      setUser(prev => prev ? { ...prev, role: allowedRole } : null);
     } catch (error) {
       console.error('Error updating user role:', error);
     }

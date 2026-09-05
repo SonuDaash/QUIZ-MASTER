@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
     <div className="max-w-5xl mx-auto space-y-8 pb-12">
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold uppercase tracking-wider mb-1">
-          <Award className="w-3.5 h-3.5" /> PABSON Championship Rankings
+          <Award className="w-3.5 h-3.5" /> Inter-School Championship Rankings
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1e3a5f] tracking-tight">
           Quiz Masters Leaderboard

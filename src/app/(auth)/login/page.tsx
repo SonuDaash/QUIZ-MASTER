@@ -9,6 +9,7 @@ import { getUserProfile, createUserProfile } from '@/lib/firebase/firestore';
 import { Shield, GraduationCap, ArrowRight, AlertCircle, Loader2, BookOpen, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ADMIN_EMAIL, isAuthorizedAdminEmail } from '@/lib/constants';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -21,8 +22,22 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSuccessfulRedirect = (role: 'student' | 'admin') => {
-    if (nextParam && nextParam.startsWith('/')) {
+  const handleAdminAuthSuccess = async (user: any) => {
+    const userEmail = user.email || '';
+    if (!isAuthorizedAdminEmail(userEmail)) {
+      setError(`Access denied. Only authorized admin (${ADMIN_EMAIL}) can access the Admin Portal. Students can practice freely on the Home Page without login.`);
+      return;
+    }
+
+    await createUserProfile(user.uid, {
+      id: user.uid,
+      name: user.displayName || 'Admin',
+      email: userEmail,
+      role: 'admin',
+      avatar_url: user.photoURL,
+    });
+
+    if (nextParam && nextParam.startsWith('/admin')) {
       router.push(nextParam);
     } else {
       router.push('/admin');
@@ -34,31 +49,15 @@ function LoginForm() {
     setLoading(true);
     setError(null);
 
+    if (!isAuthorizedAdminEmail(email)) {
+      setError(`Access denied. ${email} is not the authorized administrator (${ADMIN_EMAIL}). Students do not need to log in.`);
+      setLoading(false);
+      return;
+    }
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      let profile = await getUserProfile(user.uid);
-
-      if (!profile) {
-        await createUserProfile(user.uid, {
-          id: user.uid,
-          name: user.displayName || user.email?.split('@')[0] || 'Admin',
-          email: user.email || email,
-          role: 'admin',
-          avatar_url: user.photoURL,
-        });
-        profile = {
-          id: user.uid,
-          name: user.displayName || user.email?.split('@')[0] || 'Admin',
-          email: user.email || email,
-          role: 'admin',
-          avatar_url: user.photoURL,
-          created_at: new Date().toISOString(),
-        };
-      }
-
-      handleSuccessfulRedirect(profile.role as any || 'admin');
+      await handleAdminAuthSuccess(userCredential.user);
     } catch (err: any) {
       console.error('Login error:', err);
       let message = 'An error occurred during admin login.';
@@ -85,21 +84,11 @@ function LoginForm() {
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      await createUserProfile(user.uid, {
-        id: user.uid,
-        name: user.displayName || 'Admin User',
-        email: user.email || '',
-        role: 'admin',
-        avatar_url: user.photoURL,
-      });
-
-      handleSuccessfulRedirect('admin');
+      await handleAdminAuthSuccess(result.user);
     } catch (err: any) {
       console.error('Google Sign-In Error:', err);
       if (err.code === 'auth/popup-closed-by-user') {
-        // User closed popup
+        // Closed popup
       } else if (err.code === 'auth/api-key-not-valid' || err.code === 'auth/invalid-api-key') {
         setError('Firebase Web API Key is missing or invalid.');
       } else {
@@ -120,10 +109,10 @@ function LoginForm() {
           <span className="text-2xl font-black text-[#1e3a5f]">SMART MIND</span>
         </Link>
         <h1 className="text-center text-2xl sm:text-3xl font-black text-slate-900">
-          Admin & Coordinator Portal
+          Admin Portal Login
         </h1>
         <p className="mt-1 text-center text-xs sm:text-sm text-slate-500">
-          Question Bank Management • Stage Competition • Analytics
+          Authorized Admin: <strong className="text-slate-800">{ADMIN_EMAIL}</strong>
         </p>
       </div>
 
@@ -134,13 +123,13 @@ function LoginForm() {
           <div className="space-y-1">
             <p className="text-xs font-bold text-emerald-900">Are you a student?</p>
             <p className="text-xs text-emerald-800 leading-relaxed">
-              You do <strong>not</strong> need to log in! You can practice all questions freely with instant solutions directly on the homepage.
+              You do <strong>not</strong> need to log in! You can practice all questions freely with instant solutions on the home page.
             </p>
             <Link
               href="/"
               className="inline-flex items-center gap-1 text-xs font-black text-emerald-900 hover:text-emerald-950 underline mt-1"
             >
-              Go to Home Practice (No Login Required) →
+              Go to Home Practice (No Login Needed) →
             </Link>
           </div>
         </div>
@@ -156,17 +145,9 @@ function LoginForm() {
             </span>
           </div>
 
-          {/* Intended Destination Notice */}
-          {nextParam && (
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-              <span>Please sign in with administrator credentials to access: <code className="font-mono">{nextParam}</code></span>
-            </div>
-          )}
-
           {/* Error Message */}
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2 animate-fade-in">
+            <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2 animate-fade-in leading-relaxed">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -202,7 +183,7 @@ function LoginForm() {
                 />
               </svg>
             )}
-            Sign in as Admin with Google
+            Sign in with Google ({ADMIN_EMAIL})
           </Button>
 
           <div className="relative">
@@ -225,7 +206,7 @@ function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@school.edu.np"
+                placeholder="kinglasted23@gmail.com"
                 className="min-h-[44px] h-11 text-sm"
               />
             </div>
@@ -257,7 +238,7 @@ function LoginForm() {
           {/* Back to Home Practice */}
           <div className="pt-2 border-t border-slate-100 text-center">
             <Link href="/" className="text-xs text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1">
-              <BookOpen className="w-3.5 h-3.5" /> Return to Student Practice (Home)
+              <BookOpen className="w-3.5 h-3.5" /> Return to Student Practice Hub
             </Link>
           </div>
         </div>
