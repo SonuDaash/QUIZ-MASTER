@@ -27,6 +27,7 @@ import {
   ChevronsRight,
   Loader2,
   FileText,
+  Sparkles,
 } from 'lucide-react';
 import { getQuestions, deleteQuestion, getSubjects } from '@/lib/firebase/firestore';
 import type { Question, Subject } from '@/lib/types';
@@ -176,7 +177,13 @@ export default function QuestionBank() {
             Manage and organize your question repository (<span className="font-bold text-slate-900">{questions.length} total questions</span> in Firestore).
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/questions/ai-generator">
+            <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white cursor-pointer shadow-xs">
+              <Sparkles className="mr-2 h-4 w-4 text-amber-300" />
+              AI Generator
+            </Button>
+          </Link>
           <Link href="/admin/questions/export">
             <Button variant="outline" className="cursor-pointer">
               <FileText className="mr-2 h-4 w-4" />

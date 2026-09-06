@@ -25,6 +25,7 @@ import {
   Headphones,
   Settings,
   Brain,
+  Sparkles,
 } from 'lucide-react';
 
 const navGroups = [
@@ -38,6 +39,7 @@ const navGroups = [
     title: 'Question Bank',
     items: [
       { title: 'All Questions', href: '/admin/questions', icon: Database },
+      { title: 'AI Generator', href: '/admin/questions/ai-generator', icon: Sparkles },
       { title: 'Add Question', href: '/admin/questions/new', icon: PlusCircle },
       { title: 'Import Questions', href: '/admin/questions/import', icon: UploadCloud },
       { title: 'Print / Export PDF', href: '/admin/questions/export', icon: FileText },
