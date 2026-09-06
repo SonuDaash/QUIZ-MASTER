@@ -39,6 +39,7 @@ import {
   HelpCircle,
   Keyboard,
   Share2,
+  Shuffle,
 } from 'lucide-react';
 import { soundFx } from '@/lib/audio';
 import { getQuestions } from '@/lib/firebase/firestore';
@@ -53,11 +54,21 @@ interface AnswerRecord {
   xpEarned: number;
 }
 
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export default function HomePage() {
   // Master Question Bank
   const [allQuestions, setAllQuestions] = useState<PracticeQuestion[]>(COMPREHENSIVE_QUESTION_BANK);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [trainingMode, setTrainingMode] = useState<TrainingMode>('general');
+  const [deckSeed, setDeckSeed] = useState(1);
 
   // Practice State
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -136,9 +147,9 @@ export default function HomePage() {
     loadFirestoreQuestions();
   }, []);
 
-  // Filter questions based on Mode and Category
+  // Filter and shuffle questions based on Mode, Category, and Deck Seed
   const activeQuestions = useMemo(() => {
-    let list = allQuestions;
+    let list = [...allQuestions];
 
     if (trainingMode === 'audiovisual') {
       list = list.filter((q) => !!q.image_url || q.category === 'Audio-Visual');
@@ -155,8 +166,23 @@ export default function HomePage() {
       list = list.filter((q) => q.category === selectedCategory);
     }
 
-    return list.length > 0 ? list : allQuestions;
-  }, [allQuestions, selectedCategory, trainingMode]);
+    // Shuffle question order
+    const rawList = list.length > 0 ? list : allQuestions;
+    const shuffledList = shuffleArray(rawList);
+
+    // Shuffle options within each question and assign A, B, C, D labels
+    return shuffledList.map((q) => {
+      const labels: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
+      const shuffledOptions = shuffleArray(q.question_options);
+      return {
+        ...q,
+        question_options: shuffledOptions.map((opt, idx) => ({
+          ...opt,
+          option_label: labels[idx] || 'A',
+        })),
+      };
+    });
+  }, [allQuestions, selectedCategory, trainingMode, deckSeed]);
 
   const currentQ = activeQuestions[currentIndex] || activeQuestions[0];
 
@@ -310,7 +336,18 @@ export default function HomePage() {
     setIsAnswerSubmitted(false);
     setIsCompleted(false);
     setStreak(0);
+    setDeckSeed((prev) => prev + 1);
     if (newMode) setTrainingMode(newMode);
+  };
+
+  const handleShuffle = () => {
+    setUserAnswers({});
+    setCurrentIndex(0);
+    setSelectedOptionLabel(null);
+    setIsAnswerSubmitted(false);
+    setIsCompleted(false);
+    setStreak(0);
+    setDeckSeed((prev) => prev + 1);
   };
 
   // Performance Aggregate Calculations
@@ -466,8 +503,19 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Quick Controls: Audio & Palette */}
+            {/* Quick Controls: Shuffle, Audio & Palette */}
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleShuffle}
+                className="p-1.5 px-2.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1.5 border border-slate-700 cursor-pointer transition-colors"
+                title="Shuffle Question & Option Order"
+                aria-label="Shuffle Questions"
+              >
+                <Shuffle className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline">Shuffle</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => {
