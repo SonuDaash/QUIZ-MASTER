@@ -7,6 +7,7 @@ export interface PracticeQuestion {
   time_limit?: number;
   explanation: string;
   marks?: number;
+  image_url?: string;
   question_options: {
     id: string;
     option_label: 'A' | 'B' | 'C' | 'D';
@@ -475,6 +476,58 @@ export const COMPREHENSIVE_QUESTION_BANK: PracticeQuestion[] = [
       { id: 'sci_07_b', option_label: 'B', option_text: '206', is_correct: true },
       { id: 'sci_07_c', option_label: 'C', option_text: '216', is_correct: false },
       { id: 'sci_07_d', option_label: 'D', option_text: '256', is_correct: false },
+    ],
+  },
+  // 7. Audio-Visual & Multimedia Round
+  {
+    id: 'av_01',
+    question_text: 'Identify the iconic UNESCO World Heritage site known as the "Monkey Temple" situated on a hilltop in the Kathmandu Valley.',
+    category: 'Audio-Visual',
+    subject_id: 'subj_hist',
+    difficulty: 'easy',
+    time_limit: 25,
+    explanation: 'Swayambhunath Stupa, famously referred to as the Monkey Temple, is an ancient religious architecture atop a hill in Kathmandu Valley.',
+    marks: 2,
+    image_url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
+    question_options: [
+      { id: 'av_01_a', option_label: 'A', option_text: 'Boudhanath Stupa', is_correct: false },
+      { id: 'av_01_b', option_label: 'B', option_text: 'Swayambhunath Stupa', is_correct: true },
+      { id: 'av_01_c', option_label: 'C', option_text: 'Pashupatinath Temple', is_correct: false },
+      { id: 'av_01_d', option_label: 'D', option_text: 'Changunarayan Temple', is_correct: false },
+    ],
+  },
+  {
+    id: 'av_02',
+    question_text: 'Which celestial body in our solar system is shown with prominent icy rings orbiting around its equator?',
+    category: 'Audio-Visual',
+    subject_id: 'subj_sci',
+    difficulty: 'easy',
+    time_limit: 20,
+    explanation: 'Saturn has the most extensive and visible ring system of any planet in our solar system.',
+    marks: 2,
+    image_url: 'https://images.unsplash.com/photo-1614732414444-096e5f1122d5?auto=format&fit=crop&w=800&q=80',
+    question_options: [
+      { id: 'av_02_a', option_label: 'A', option_text: 'Jupiter', is_correct: false },
+      { id: 'av_02_b', option_label: 'B', option_text: 'Saturn', is_correct: true },
+      { id: 'av_02_c', option_label: 'C', option_text: 'Uranus', is_correct: false },
+      { id: 'av_02_d', option_label: 'D', option_text: 'Neptune', is_correct: false },
+    ],
+  },
+  {
+    id: 'av_03',
+    question_text: 'Identify the state flower of Nepal (Rhododendron arboreum) depicted in the national emblem.',
+    category: 'Nepal Parichaya',
+    subject_id: 'subj_geo',
+    difficulty: 'easy',
+    time_limit: 25,
+    explanation: 'Lali Gurans (Rhododendron arboreum) is the official national flower of Nepal.',
+    marks: 2,
+    image_url: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=800&q=80',
+    question_options: [
+      { id: 'av_03_a', option_label: 'A', option_text: 'Lali Gurans (Rhododendron)', is_correct: true },
+      { id: 'av_03_b', option_label: 'B', option_text: 'Lotus (Kamal)', is_correct: false },
+      { id: 'av_03_c', option_label: 'C', option_text: 'Sayapatri (Marigold)', is_correct: false },
+      { id: 'av_03_d', option_label: 'D', option_text: 'Sunakhari (Orchid)', is_correct: false },
     ],
   },
 ];
