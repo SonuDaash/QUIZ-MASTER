@@ -24,6 +24,10 @@ async function fetchAIDistractors(
   correctAnswer: string,
   category: string
 ): Promise<string[]> {
+  if (!NVIDIA_API_KEY || NVIDIA_API_KEY.trim() === '') {
+    return generateDomainDistractors(questionText, correctAnswer, category);
+  }
+
   try {
     const prompt = `You are an expert quizmaster and educator.
 Given this quiz question and its 100% correct answer, generate 3 plausible, realistic, and highly competitive multiple-choice distractors (incorrect options) that belong to the exact same subject/category (${category}).
@@ -45,6 +49,9 @@ Example output format:
       temperature: 0.4,
     };
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     const res = await fetch(NVIDIA_INVOKE_URL, {
       method: 'POST',
       headers: {
@@ -52,7 +59,9 @@ Example output format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     if (res.ok) {
       const data = await res.json();
@@ -70,10 +79,10 @@ Example output format:
       }
     }
   } catch (err) {
-    console.warn('NVIDIA NIM API call error, using domain fallback:', err);
+    console.warn('NVIDIA NIM API call failed, using domain fallback:', err);
   }
 
-  // Smart Contextual Fallback if API is unreachable
+  // Smart Contextual Fallback
   return generateDomainDistractors(questionText, correctAnswer, category);
 }
 

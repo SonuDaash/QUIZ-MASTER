@@ -80,7 +80,14 @@ export default function AIGeneratorPage() {
         }),
       });
 
-      const data = await res.json();
+      let data: any = {};
+      const rawText = await res.text();
+      try {
+        data = JSON.parse(rawText);
+      } catch (parseErr) {
+        throw new Error(rawText || `Server returned status ${res.status}`);
+      }
+
       if (data.success && data.questions) {
         setQuestions(data.questions);
         setStatusMessage(`Successfully generated ${data.questions.length} competition questions!`);

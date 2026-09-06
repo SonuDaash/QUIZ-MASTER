@@ -187,7 +187,14 @@ export default function AIOptionsGeneratorPage() {
         body: JSON.stringify({ items: payloadItems }),
       });
 
-      const data = await res.json();
+      let data: any = {};
+      const rawText = await res.text();
+      try {
+        data = JSON.parse(rawText);
+      } catch (parseErr) {
+        throw new Error(rawText || `Server returned error status: ${res.status}`);
+      }
+
       if (data.success && data.questions) {
         const mappedResults: GeneratedOptionItem[] = data.questions.map((item: any) => {
           const original = selectedQuestionsList.find((q) => q.id === item.id);
@@ -209,7 +216,7 @@ export default function AIOptionsGeneratorPage() {
       }
     } catch (err: any) {
       console.error('Error generating options:', err);
-      setStatusMessage(err.message || 'Network error occurred during option generation.');
+      setStatusMessage(err.message || 'Error occurred during option generation.');
     } finally {
       setGenerating(false);
     }
