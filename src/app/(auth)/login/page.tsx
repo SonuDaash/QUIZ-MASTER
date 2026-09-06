@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase/client';
-import { getUserProfile, createUserProfile } from '@/lib/firebase/firestore';
+import { createUserProfile } from '@/lib/firebase/firestore';
 import { Shield, GraduationCap, ArrowRight, AlertCircle, Loader2, BookOpen, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ADMIN_EMAIL, isAuthorizedAdminEmail } from '@/lib/constants';
+import { isAuthorizedAdminEmail } from '@/lib/constants';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -25,7 +25,7 @@ function LoginForm() {
   const handleAdminAuthSuccess = async (user: any) => {
     const userEmail = user.email || '';
     if (!isAuthorizedAdminEmail(userEmail)) {
-      setError(`Access denied. Only authorized admin (${ADMIN_EMAIL}) can access the Admin Portal. Students can practice freely on the Home Page without login.`);
+      setError('Access denied. Only authorized administrators can access the Admin Portal. Students can practice freely on the Home Page without login.');
       return;
     }
 
@@ -50,7 +50,7 @@ function LoginForm() {
     setError(null);
 
     if (!isAuthorizedAdminEmail(email)) {
-      setError(`Access denied. ${email} is not the authorized administrator (${ADMIN_EMAIL}). Students do not need to log in.`);
+      setError('Access denied. This email does not have administrator privileges. Students do not need to log in to practice.');
       setLoading(false);
       return;
     }
@@ -66,7 +66,7 @@ function LoginForm() {
         err.code === 'auth/wrong-password' ||
         err.code === 'auth/invalid-credential'
       ) {
-        message = 'Invalid email or password. Please verify your admin credentials.';
+        message = 'Invalid email or password. Please verify your administrator credentials.';
       } else if (err.code === 'auth/too-many-requests') {
         message = 'Too many failed login attempts. Please try again in a few moments.';
       } else if (err.message) {
@@ -112,7 +112,7 @@ function LoginForm() {
           Admin Portal Login
         </h1>
         <p className="mt-1 text-center text-xs sm:text-sm text-slate-500">
-          Authorized Admin: <strong className="text-slate-800">{ADMIN_EMAIL}</strong>
+          Administrator Access & Management
         </p>
       </div>
 
@@ -183,7 +183,7 @@ function LoginForm() {
                 />
               </svg>
             )}
-            Sign in with Google ({ADMIN_EMAIL})
+            Sign in as Administrator with Google
           </Button>
 
           <div className="relative">
@@ -191,7 +191,7 @@ function LoginForm() {
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-slate-400 font-medium">Or email sign in</span>
+              <span className="bg-white px-2 text-slate-400 font-medium">Or administrator email</span>
             </div>
           </div>
 
@@ -206,7 +206,7 @@ function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="kinglasted23@gmail.com"
+                placeholder="admin@school.edu.np"
                 className="min-h-[44px] h-11 text-sm"
               />
             </div>

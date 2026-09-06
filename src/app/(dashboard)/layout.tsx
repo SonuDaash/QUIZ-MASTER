@@ -68,7 +68,7 @@ export default function DashboardLayout({
           Your account (<strong>{user.email || user.name}</strong>) is not authorized as an administrator.
         </p>
         <p className="max-w-md text-xs text-slate-500 mb-6">
-          The Admin Portal is strictly restricted to administrator <code>{ADMIN_EMAIL}</code>.
+          The Admin Portal is restricted to authorized platform administrators only.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">

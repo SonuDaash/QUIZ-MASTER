@@ -1,12 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { GraduationCap, Shield, Sparkles } from 'lucide-react';
+import { GraduationCap, Sparkles } from 'lucide-react';
 
 export function PublicFooter() {
   return (
     <footer className="bg-slate-900 text-slate-300 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand & Summary */}
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2.5">
@@ -67,20 +67,6 @@ export function PublicFooter() {
               </li>
             </ul>
           </div>
-
-          {/* Coordinator Portal */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">Administrators</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Quiz coordinators and administrators can log in to manage questions, review submissions, and export exam papers.
-            </p>
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <Shield className="w-3.5 h-3.5" /> Admin Portal Login →
-            </Link>
-          </div>
         </div>
 
         {/* Bottom Bar */}
@@ -92,9 +78,6 @@ export function PublicFooter() {
             </Link>
             <Link href="/about" className="hover:text-slate-400 transition-colors">
               Rules & Guidelines
-            </Link>
-            <Link href="/login" className="hover:text-slate-400 transition-colors">
-              Admin Sign In
             </Link>
           </div>
         </div>

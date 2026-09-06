@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import {
   GraduationCap,
   Menu,
   X,
   BookOpen,
   Trophy,
-  Shield,
   Info,
 } from 'lucide-react';
 
@@ -61,19 +59,6 @@ export function PublicHeader() {
           </Link>
         </nav>
 
-        {/* Desktop CTA - Admin Login Only */}
-        <div className="hidden sm:flex items-center gap-3">
-          <Link href="/login">
-            <Button
-              variant="outline"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-blue-700 font-bold text-xs sm:text-sm min-h-[38px] px-3.5 rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
-            >
-              <Shield className="w-3.5 h-3.5 text-indigo-600" />
-              Admin Portal
-            </Button>
-          </Link>
-        </div>
-
         {/* Mobile Menu Toggle */}
         <div className="flex md:hidden">
           <button
@@ -90,7 +75,7 @@ export function PublicHeader() {
 
       {/* Mobile Navigation Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-6 space-y-3 animate-fade-in">
+        <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-5 space-y-2 animate-fade-in">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
@@ -115,14 +100,6 @@ export function PublicHeader() {
             <Info className="w-5 h-5 text-slate-500" />
             Format & Rules
           </Link>
-
-          <div className="pt-3 border-t border-slate-200 dark:border-slate-800">
-            <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full min-h-[44px] text-sm font-bold justify-center border-slate-300">
-                <Shield className="w-4 h-4 mr-2 text-indigo-600" /> Admin Portal
-              </Button>
-            </Link>
-          </div>
         </div>
       )}
     </header>
