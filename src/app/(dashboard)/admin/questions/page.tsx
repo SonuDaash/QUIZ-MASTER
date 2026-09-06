@@ -181,7 +181,13 @@ export default function QuestionBank() {
           <Link href="/admin/questions/ai-generator">
             <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white cursor-pointer shadow-xs">
               <Sparkles className="mr-2 h-4 w-4 text-amber-300" />
-              AI Generator
+              AI Questions
+            </Button>
+          </Link>
+          <Link href="/admin/questions/ai-options">
+            <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white cursor-pointer shadow-xs">
+              <Sparkles className="mr-2 h-4 w-4 text-amber-300" />
+              AI Options
             </Button>
           </Link>
           <Link href="/admin/questions/export">
