@@ -321,7 +321,7 @@ export default function HomePage() {
   const completionPct = Math.round((answeredCount / activeQuestions.length) * 100);
 
   // Available unique categories
-  const categories = ['All', 'Nepal Parichaya', 'Science', 'Geography', 'History', 'Mathematics', 'Computer & Tech', 'Current Affairs'];
+  const categories = ['All', 'Nepal Parichaya', 'Mathematics', 'History', 'Geography', 'Science', 'Computer & Tech', 'Current Affairs', 'Audio-Visual'];
 
   // Top School Leaderboard Data
   const topSchools = [
