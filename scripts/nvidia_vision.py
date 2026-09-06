@@ -9,7 +9,7 @@ import requests
 import json
 
 INVOKE_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-API_KEY = os.getenv("NVIDIA_API_KEY", "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")
+API_KEY = os.getenv("NVIDIA_API_KEY", "")
 
 def analyze_image(image_url: str, prompt: str = "What is in this image? Provide a detailed and accurate description.") -> str:
     headers = {

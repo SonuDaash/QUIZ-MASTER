@@ -16,9 +16,7 @@ interface GeneratedOptionOutput {
 }
 
 const NVIDIA_INVOKE_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
-const NVIDIA_API_KEY =
-  process.env.NVIDIA_API_KEY ||
-  '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';
+const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY || '';
 
 // Call NVIDIA NIM Vision / LLM to generate 3 high-quality, contextual distractors
 async function fetchAIDistractors(
